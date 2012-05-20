@@ -347,7 +347,7 @@ class ntp (
   }
 
   $manage_file_content = $ntp::template ? {
-    ''        => undef,
+    ''        => template('ntp/ntp.conf.erb'),
     default   => template($ntp::template),
   }
 
