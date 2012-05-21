@@ -14,6 +14,22 @@ This module requires functions provided by the Example42 Puppi module (you need 
 
 For detailed info about the logic and usage patterns of Example42 modules check the DOCS directory on Example42 main modules set.
 
+
+== USAGE - Module specific settings
+
+* Define one or more NTP Servers to use (Default value: 'pool.ntp.org')
+
+        class { 'ntp':
+          server => [ '10.42.112.123' , '10.42.113.123' ],
+        }
+
+* Define NTP sync approach: Via NTP service (default) or via a ntpdate cron job (this example):
+
+        class { 'ntp':
+          runmode => 'cron',
+        }
+
+
 == USAGE - Basic management
 
 * Install ntp with default settings
@@ -49,7 +65,8 @@ For detailed info about the logic and usage patterns of Example42 modules check 
 * Use custom sources for main config file 
 
         class { 'ntp':
-          source => [ "puppet:///modules/lab42/ntp/ntp.conf-${hostname}" , "puppet:///modules/lab42/ntp/ntp.conf" ], 
+          source   => [ "puppet:///modules/lab42/ntp/ntp.conf-${hostname}" , "puppet:///modules/lab42/ntp/ntp.conf" ], 
+          template => '',    # This is needed because by default a template is used
         }
 
 
