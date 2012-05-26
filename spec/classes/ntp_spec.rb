@@ -11,6 +11,10 @@ describe 'ntp' do
     it { should contain_service('ntp').with_ensure('running') }
     it { should contain_service('ntp').with_enable('true') }
     it { should contain_file('ntp.conf').with_ensure('present') }
+    it 'should generate a valid default template' do
+      content = catalogue.resource('file', 'ntp.conf').send(:parameters)[:content]
+      content.should match "server pool.ntp.org"
+    end
   end
 
   describe 'Test installation of a specific version' do
@@ -98,11 +102,14 @@ describe 'ntp' do
       content = catalogue.resource('file', 'ntp.conf').send(:parameters)[:content]
       content.should match "value_a"
     end
-
+    it 'should not use source parameters' do
+      content = catalogue.resource('file', 'ntp.conf').send(:parameters)[:source]
+      content.should be_nil
+    end
   end
 
   describe 'Test customizations - source' do
-    let(:params) { {:source => "puppet://modules/ntp/spec" , :source_dir => "puppet://modules/ntp/dir/spec" , :source_dir_purge => true } }
+    let(:params) { {:source => "puppet://modules/ntp/spec" , :source_dir => "puppet://modules/ntp/dir/spec" , :source_dir_purge => true, :template => '' } }
 
     it 'should request a valid source ' do
       content = catalogue.resource('file', 'ntp.conf').send(:parameters)[:source]
@@ -115,6 +122,10 @@ describe 'ntp' do
     it 'should purge source dir if source_dir_purge is true' do
       content = catalogue.resource('file', 'ntp.dir').send(:parameters)[:purge]
       content.should == true
+    end
+    it 'should not use template parameters' do
+      content = catalogue.resource('file', 'ntp.conf').send(:parameters)[:content]
+      content.should be_nil
     end
   end
 
