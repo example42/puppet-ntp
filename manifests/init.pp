@@ -427,12 +427,15 @@ class ntp (
 
   ### Service monitoring, if enabled ( monitor => true )
   if $ntp::bool_monitor == true and $ntp::runmode == 'service' {
-    monitor::port { "ntp_${ntp::protocol}_${ntp::port}":
-      protocol => $ntp::protocol,
-      port     => $ntp::port,
-      target   => $ntp::monitor_target,
-      tool     => $ntp::monitor_tool,
-      enable   => $ntp::manage_monitor,
+
+    if $ntp::protocol == 'tcp' {
+      monitor::port { "ntp_${ntp::protocol}_${ntp::port}":
+        protocol => $ntp::protocol,
+        port     => $ntp::port,
+        target   => $ntp::monitor_target,
+        tool     => $ntp::monitor_tool,
+        enable   => $ntp::manage_monitor,
+      }
     }
     monitor::process { 'ntp_process':
       process  => $ntp::process,
