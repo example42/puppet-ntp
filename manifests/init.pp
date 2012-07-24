@@ -401,7 +401,7 @@ class ntp (
       notify  => $ntp::manage_service_autorestart,
       source  => $ntp::source_dir,
       recurse => true,
-      purge   => $ntp::source_dir_purge,
+      purge   => $ntp::bool_source_dir_purge,
       replace => $ntp::manage_file_replace,
       audit   => $ntp::manage_audit,
     }
