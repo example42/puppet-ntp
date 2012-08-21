@@ -271,6 +271,11 @@ class ntp (
   $bool_audit_only=any2bool($audit_only)
 
   ### Definition of some variables used in the module
+  $first_server = is_array($ntp::server) ? {
+    false => $ntp::server,
+    true  => $ntp::server[0],
+  }
+
   $manage_package = $ntp::bool_absent ? {
     true  => 'absent',
     false => $ntp::version,

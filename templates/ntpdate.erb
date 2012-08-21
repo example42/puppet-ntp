@@ -6,7 +6,7 @@ randomsec=$RANDOM
 let "randomsec %= 600"
 sleep $randomsec
 
-/usr/sbin/ntpdate -s <%= scope.lookupvar('ntp::server') %>
+/usr/sbin/ntpdate -s <%= scope.lookupvar('ntp::first_server') %>
 # /sbin/clock -w
 
 exit 0
