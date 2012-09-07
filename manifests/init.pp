@@ -255,6 +255,7 @@ class ntp (
   $data_dir            = params_lookup( 'data_dir' ),
   $log_dir             = params_lookup( 'log_dir' ),
   $log_file            = params_lookup( 'log_file' ),
+  $drift_file          = params_lookup( 'drift_file' ),
   $use_local_clock     = params_lookup( 'use_local_clock' ),
   $tinker_panic        = params_lookup( 'tinker_panic' ),
   $port                = params_lookup( 'port' ),
