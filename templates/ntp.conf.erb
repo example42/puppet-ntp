@@ -50,7 +50,7 @@ tinker panic <%= tinker_panic %>
 # No symbolic links allowed, either, since the daemon updates the file
 # by creating a temporary in the same directory and then rename()'ing
 # it to the file.
-driftfile /var/lib/ntp/drift
+driftfile <%= drift_file %>
 
 # Key file containing the keys and key identifiers used when operating
 # with symmetric key cryptography. 
