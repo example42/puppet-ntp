@@ -87,6 +87,11 @@ class ntp::params {
     default => '',
   }
 
+  $drift_file = $::operatingsystem ? {
+    /(?i:Debian|Ubuntu|Mint)/ => '/var/lib/ntp/ntp.drift',
+    default                   => '/var/lib/ntp/drift',
+  }
+
   $use_local_clock = $::virtual ? {
     'vmware' => false, # See http://www.vmware.com/pdf/vmware_timekeeping.pdf page 18
     default  => true,
