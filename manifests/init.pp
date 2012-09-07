@@ -256,6 +256,7 @@ class ntp (
   $log_dir             = params_lookup( 'log_dir' ),
   $log_file            = params_lookup( 'log_file' ),
   $use_local_clock     = params_lookup( 'use_local_clock' ),
+  $tinker_panic        = params_lookup( 'tinker_panic' ),
   $port                = params_lookup( 'port' ),
   $protocol            = params_lookup( 'protocol' )
   ) inherits ntp::params {
