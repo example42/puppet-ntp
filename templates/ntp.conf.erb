@@ -31,8 +31,20 @@ restrict -6 ::1
 
 # Undisciplined Local Clock. This is a fake driver intended for backup
 # and when no outside source of synchronized time is available. 
+<% if bool_use_local_clock -%>
 server	127.127.1.0	# local clock
-fudge	127.127.1.0 stratum 10	
+fudge	127.127.1.0 stratum 10
+<% else -%>
+# (Disabled)
+# server	127.127.1.0	# local clock
+# fudge	127.127.1.0 stratum 10
+<% end -%>
+
+<% if tinker_panic != '' -%>
+# Accepted clock offset (0 means any value will be accepted)
+tinker panic <%= tinker_panic %>
+<% end -%>
+
 
 # Drift file.  Put this in a directory which the daemon can write to.
 # No symbolic links allowed, either, since the daemon updates the file

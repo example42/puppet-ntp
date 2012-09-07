@@ -255,6 +255,8 @@ class ntp (
   $data_dir            = params_lookup( 'data_dir' ),
   $log_dir             = params_lookup( 'log_dir' ),
   $log_file            = params_lookup( 'log_file' ),
+  $use_local_clock     = params_lookup( 'use_local_clock' ),
+  $tinker_panic        = params_lookup( 'tinker_panic' ),
   $port                = params_lookup( 'port' ),
   $protocol            = params_lookup( 'protocol' )
   ) inherits ntp::params {
@@ -269,6 +271,7 @@ class ntp (
   $bool_firewall=any2bool($firewall)
   $bool_debug=any2bool($debug)
   $bool_audit_only=any2bool($audit_only)
+  $bool_use_local_clock=any2bool($use_local_clock)
 
   ### Definition of some variables used in the module
   $first_server = is_array($ntp::server) ? {

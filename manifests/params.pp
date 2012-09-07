@@ -87,6 +87,16 @@ class ntp::params {
     default => '',
   }
 
+  $use_local_clock = $::virtual ? {
+    'vmware' => false, # See http://www.vmware.com/pdf/vmware_timekeeping.pdf page 18
+    default  => true,
+  }
+
+  $tinker_panic = $::virtual ? {
+    'vmware' => 0, # See http://www.vmware.com/pdf/vmware_timekeeping.pdf page 18
+    default  => '',
+  }
+
   $port = '123'
   $protocol = 'udp'
 
