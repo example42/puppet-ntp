@@ -22,12 +22,16 @@ class ntp::params {
   ### Application related parameters
 
   $package = $::operatingsystem ? {
+    'Solaris' => $::operatingsystemrelease ? {
+      '5.10'  => [ 'SUNWntpr' , 'SUNWntpu' ],
+      default => 'ntp',
+    },
     default => 'ntp',
   }
 
   $service = $::operatingsystem ? {
-    /(?i:Debian|Ubuntu|Mint)/ => 'ntp',
-    default                   => 'ntpd',
+    /(?i:Debian|Ubuntu|Mint|Solaris)/ => 'ntp',
+    default                           => 'ntpd',
   }
 
   $service_status = $::operatingsystem ? {
@@ -51,7 +55,8 @@ class ntp::params {
   }
 
   $config_file = $::operatingsystem ? {
-    default => '/etc/ntp.conf',
+    'Solaris' => '/etc/inet/ntp.con',
+    default   => '/etc/ntp.conf',
   }
 
   $config_file_mode = $::operatingsystem ? {
@@ -72,7 +77,8 @@ class ntp::params {
   }
 
   $pid_file = $::operatingsystem ? {
-    default => '/var/run/ntpd.pid',
+    'Solaris' => '/var/run/ntp.pid',
+    default   => '/var/run/ntpd.pid',
   }
 
   $data_dir = $::operatingsystem ? {
