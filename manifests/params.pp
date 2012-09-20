@@ -51,11 +51,12 @@ class ntp::params {
   }
 
   $config_dir = $::operatingsystem ? {
-    default => '/etc/ntp',
+    'Solaris' => '/etc/inet',
+    default   => '/etc/ntp',
   }
 
   $config_file = $::operatingsystem ? {
-    'Solaris' => '/etc/inet/ntp.con',
+    'Solaris' => '/etc/inet/ntp.conf',
     default   => '/etc/ntp.conf',
   }
 
@@ -82,8 +83,9 @@ class ntp::params {
   }
 
   $data_dir = $::operatingsystem ? {
-    default => '/etc/ntp',
-  }
+    'Solaris' => '/var/ntp',
+    default   => '/var/lib/ntp',
+ }
 
   $log_dir = $::operatingsystem ? {
     default => '',
@@ -94,8 +96,8 @@ class ntp::params {
   }
 
   $drift_file = $::operatingsystem ? {
-    /(?i:Debian|Ubuntu|Mint)/ => '/var/lib/ntp/ntp.drift',
-    default                   => '/var/lib/ntp/drift',
+    /(?i:Debian|Ubuntu|Mint|Solaris)/ => "$data_dir/ntp.drift",
+    default                           => "$data_dir/drift",
   }
 
   $use_local_clock = $::virtual ? {
