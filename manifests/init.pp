@@ -15,6 +15,12 @@
 #   To enable ntp service (default)      runmode => service
 #   To schedule ntpdaty hourly cronjobs  runmode => cron
 #
+# [*keys_file*]
+#   Path of ntp keys file
+#
+# [*keys_file_source*]
+#   Source file for the keys
+#
 # Standard class parameters
 # Define the general class behaviour and customizations
 #
@@ -217,6 +223,8 @@
 class ntp (
   $server              = params_lookup( 'server' ),
   $runmode             = params_lookup( 'runmode' ),
+  $keys_file           = params_lookup( 'keys_file' ),
+  $keys_file_source    = params_lookup( 'keys_file_source' ),
   $my_class            = params_lookup( 'my_class' ),
   $source              = params_lookup( 'source' ),
   $source_dir          = params_lookup( 'source_dir' ),
@@ -415,6 +423,21 @@ class ntp (
     }
   }
 
+  # The ntp keys file is managed if exists a source
+  if $ntp::keys_file_source {
+    file { 'ntp.key':
+      ensure  => $ntp::manage_file,
+      path    => $ntp::keys_file,
+      mode    => '0600',
+      owner   => $ntp::config_file_owner,
+      group   => $ntp::config_file_group,
+      require => Package[$ntp::package],
+      notify  => $ntp::manage_service_autorestart,
+      source  => $ntp::keys_file_source,
+      replace => $ntp::manage_file_replace,
+      audit   => $ntp::manage_audit,
+    }
+  }
 
   ### Include custom class if $my_class is set
   if $ntp::my_class {
