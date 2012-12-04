@@ -30,7 +30,7 @@ class ntp::params {
       '5.10'  => [ 'SUNWntpr' , 'SUNWntpu' ],
       default => 'ntp',
     },
-    default => 'ntp',
+    default   => 'ntp',
   }
 
   $service = $::operatingsystem ? {
@@ -89,7 +89,7 @@ class ntp::params {
   $data_dir = $::operatingsystem ? {
     'Solaris' => '/var/ntp',
     default   => '/var/lib/ntp',
- }
+  }
 
   $log_dir = $::operatingsystem ? {
     default => '',
