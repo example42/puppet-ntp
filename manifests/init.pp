@@ -479,6 +479,15 @@ class ntp (
     }
   }
 
+  # Time Monitoring
+  if $ntp::bool_monitor == true {
+    monitor::plugin { "ntp_time":
+      plugin    => 'check_ntp',
+      arguments => "-H $ntp::first_server",
+      tool      => $ntp::monitor_tool,
+      enable    => $ntp::manage_monitor,
+    }
+  }
 
   ### Firewall management, if enabled ( firewall => true )
   if $ntp::bool_firewall == true {
