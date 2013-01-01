@@ -44,7 +44,7 @@ class ntp::params {
   }
 
   $process = $::operatingsystem ? {
-    default => 'ntp',
+    default => 'ntpd',
   }
 
   $process_args = $::operatingsystem ? {
