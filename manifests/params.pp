@@ -26,11 +26,12 @@ class ntp::params {
   ### Application related parameters
 
   $package = $::operatingsystem ? {
-    'Solaris' => $::operatingsystemrelease ? {
+    /(?i:Debian|Ubuntu|Mint)/ => [ 'ntp' , 'ntpdate' ],
+    'Solaris'                 => $::operatingsystemrelease ? {
       '5.10'  => [ 'SUNWntpr' , 'SUNWntpu' ],
       default => 'ntp',
     },
-    default   => 'ntp',
+    default                   => 'ntp',
   }
 
   $service = $::operatingsystem ? {
