@@ -15,7 +15,7 @@
 class ntp::params {
 
   ### Module specific parameters
-  $server = 'pool.ntp.org'
+  $server = [ '0.pool.ntp.org', '1.pool.ntp.org', '2.pool.ntp.org', '3.pool.ntp.org' ]
   $runmode = 'service'
   $keys_file = $::operatingsystem ? {
     'Solaris' => '/etc/inet/ntp.keys',
