@@ -39,6 +39,26 @@ describe 'ntp' do
     end
   end
 
+  describe 'Test server parameter as arrays' do
+    let(:params) { {:server => ['server1', 'server2'] } }
+
+    it 'should generate a valid default template' do
+      content = catalogue.resource('file', 'ntp.conf').send(:parameters)[:content]
+      content.should match 'server server1'
+      content.should match 'server server2'
+    end
+  end
+
+  describe 'Test server parameter as strings' do
+    let(:params) { {:server => 'server1,server2' } }
+
+    it 'should generate a valid default template' do
+      content = catalogue.resource('file', 'ntp.conf').send(:parameters)[:content]
+      content.should match 'server server1'
+      content.should match 'server server2'
+    end
+  end
+
   describe 'Test decommissioning - absent' do
     let(:params) { {:absent => true, :monitor => true , :firewall => true, :port => '42', :protocol => 'tcp'} }
 
