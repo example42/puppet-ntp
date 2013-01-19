@@ -248,6 +248,7 @@ class ntp (
   $debug               = params_lookup( 'debug' , 'global' ),
   $audit_only          = params_lookup( 'audit_only' , 'global' ),
   $package             = params_lookup( 'package' ),
+  $ntpdate_package     = params_lookup( 'ntpdate_package' ),
   $service             = params_lookup( 'service' ),
   $service_status      = params_lookup( 'service_status' ),
   $process             = params_lookup( 'process' ),
@@ -295,6 +296,10 @@ class ntp (
   $manage_package = $ntp::bool_absent ? {
     true  => 'absent',
     false => $ntp::version,
+  }
+  $real_package = $ntp::runmode ? {
+    service => $ntp::package,
+    cron    => $ntp::ntpdate_package,
   }
 
   $manage_service_enable = $ntp::bool_disableboot ? {
@@ -373,8 +378,9 @@ class ntp (
   }
 
   ### Managed resources
-  package { $ntp::package:
+  package { 'ntp':
     ensure => $ntp::manage_package,
+    name   => $ntp::real_package,
   }
 
   service { 'ntp':
@@ -383,7 +389,7 @@ class ntp (
     enable     => $ntp::manage_service_enable,
     hasstatus  => $ntp::service_status,
     pattern    => $ntp::process,
-    require    => Package[$ntp::package],
+    require    => Package['ntp'],
   }
 
   file { 'ntp.cron':
@@ -392,7 +398,7 @@ class ntp (
     mode    => '0755',
     owner   => $ntp::config_file_owner,
     group   => $ntp::config_file_group,
-    require => Package[$ntp::package],
+    require => Package['ntp'],
     content => template('ntp/ntpdate.erb'),
     replace => $ntp::manage_file_replace,
     audit   => $ntp::manage_audit,
@@ -404,7 +410,7 @@ class ntp (
     mode    => $ntp::config_file_mode,
     owner   => $ntp::config_file_owner,
     group   => $ntp::config_file_group,
-    require => Package[$ntp::package],
+    require => Package['ntp'],
     notify  => $ntp::manage_service_autorestart,
     source  => $ntp::manage_file_source,
     content => $ntp::manage_file_content,
@@ -417,7 +423,7 @@ class ntp (
     file { 'ntp.dir':
       ensure  => directory,
       path    => $ntp::config_dir,
-      require => Package[$ntp::package],
+      require => Package['ntp'],
       notify  => $ntp::manage_service_autorestart,
       source  => $ntp::source_dir,
       recurse => true,
@@ -435,7 +441,7 @@ class ntp (
       mode    => '0600',
       owner   => $ntp::config_file_owner,
       group   => $ntp::config_file_group,
-      require => Package[$ntp::package],
+      require => Package['ntp'],
       notify  => $ntp::manage_service_autorestart,
       source  => $ntp::keys_file_source,
       replace => $ntp::manage_file_replace,
