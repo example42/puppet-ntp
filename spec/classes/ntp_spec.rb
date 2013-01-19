@@ -8,9 +8,11 @@ describe 'ntp' do
 
   describe 'Test standard installation' do
     it { should contain_package('ntp').with_ensure('present') }
+    it { should contain_package('ntp').with_name('ntp') }
     it { should contain_service('ntp').with_ensure('running') }
     it { should contain_service('ntp').with_enable('true') }
     it { should contain_file('ntp.conf').with_ensure('present') }
+    it { should contain_file('ntp.cron').with_ensure('absent') }
     it 'should generate a valid default template' do
       content = catalogue.resource('file', 'ntp.conf').send(:parameters)[:content]
       content.should match "server pool.ntp.org"
@@ -56,6 +58,22 @@ describe 'ntp' do
       content = catalogue.resource('file', 'ntp.conf').send(:parameters)[:content]
       content.should match 'server server1'
       content.should match 'server server2'
+    end
+  end
+
+  describe 'Test install with cron runmode on Debian' do
+    let(:facts) { { :ipaddress => '10.42.42.42', :operatingsystem => 'Debian' } }
+    let(:params) { {:runmode => 'cron', :server => ['server1', 'server2'] } }
+
+    it { should contain_package('ntp').with_ensure('present') }
+    it { should contain_package('ntp').with_name('ntpdate') }
+    it { should contain_service('ntp').with_ensure('stopped') }
+    it { should contain_service('ntp').with_enable('false') }
+    it { should contain_file('ntp.conf').with_ensure('present') }
+    it { should contain_file('ntp.cron').with_ensure('present') }
+    it 'should generate a valid default template' do
+      content = catalogue.resource('file', 'ntp.cron').send(:parameters)[:content]
+      content.should match "/usr/sbin/ntpdate -s server1"
     end
   end
 
