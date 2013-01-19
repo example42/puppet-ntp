@@ -281,12 +281,16 @@ class ntp (
   $bool_debug=any2bool($debug)
   $bool_audit_only=any2bool($audit_only)
   $bool_use_local_clock=any2bool($use_local_clock)
+  $array_servers = is_array($ntp::server) ? {
+    false     => $ntp::server ? {
+      ''      => [],
+      default => split($ntp::server, ','),
+    },
+    default   => $ntp::server,
+  }
 
   ### Definition of some variables used in the module
-  $first_server = is_array($ntp::server) ? {
-    false => $ntp::server,
-    true  => $ntp::server[0],
-  }
+  $first_server = $array_servers[0]
 
   $manage_package = $ntp::bool_absent ? {
     true  => 'absent',
