@@ -18,8 +18,9 @@ class ntp::params {
   $server = [ '0.pool.ntp.org', '1.pool.ntp.org', '2.pool.ntp.org', '3.pool.ntp.org' ]
   $runmode = 'service'
   $keys_file = $::operatingsystem ? {
-    'Solaris' => '/etc/inet/ntp.keys',
-    default   => '/etc/ntp/keys',
+    'Solaris'            => '/etc/inet/ntp.keys',
+    /(?i:SLES|OpenSuSE)/ => '/etc/ntp.keys',
+    default              => '/etc/ntp/keys',
   }
   $keys_file_source = ''
 
