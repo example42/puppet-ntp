@@ -15,6 +15,14 @@
 #   To enable ntp service (default)      runmode => service
 #   To schedule ntpdaty hourly cronjobs  runmode => cron
 #
+# [*cron_command*]
+#   The command to execute when runmode=cron
+#   This was historically ntpdate but on more recent ntp versions it has
+#   been deprecated.
+#   Default: 'ntpd -q'
+#   TO similate the previous behaviour
+#   cron_command => 'ntpdate my.time.server',
+#
 # [*keys_file*]
 #   Path of ntp keys file
 #
@@ -223,6 +231,7 @@
 class ntp (
   $server              = params_lookup( 'server' ),
   $runmode             = params_lookup( 'runmode' ),
+  $cron_command        = params_lookup( 'cron_command' ),
   $keys_file           = params_lookup( 'keys_file' ),
   $keys_file_source    = params_lookup( 'keys_file_source' ),
   $my_class            = params_lookup( 'my_class' ),

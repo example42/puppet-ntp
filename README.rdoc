@@ -17,18 +17,24 @@ For detailed info about the logic and usage patterns of Example42 modules check 
 
 == USAGE - Module specific settings
 
-* Define one or more NTP Servers to use (Default value: 'pool.ntp.org')
+* Define one or more NTP Servers to use (Default value is an array of 4 servers from 'pool.ntp.org')
 
         class { 'ntp':
           server => [ '10.42.112.123' , '10.42.113.123' ],
         }
 
-* Define NTP sync approach: Via NTP service (default) or via a ntpdate cron job (this example):
+* Define NTP sync approach: Via NTP service (default) or via a ntpdate hourly cron job (with 600 secs random delay) (this example):
 
         class { 'ntp':
           runmode => 'cron',
         }
 
+* Run ntp via cron with a custom command (default: ntpd -q). For example to use the 'old' ntpdate command and force clock sync:
+
+        class { 'ntp':
+          runmode      => 'cron',
+          cron_command => 'ntpdate 0.pool.ntp.org && clock -w',
+        }
 
 == USAGE - Basic management
 
