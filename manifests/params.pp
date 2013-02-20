@@ -77,7 +77,8 @@ class ntp::params {
   }
 
   $config_file_mode = $::operatingsystem ? {
-    default => '0640',
+    /(?i:SLES|OpenSuSE)/ => '0640',
+    default              => '0644',
   }
 
   $config_file_owner = $::operatingsystem ? {
