@@ -330,8 +330,8 @@ class ntp (
     default =>  $ntp::bool_absent ? {
       true    => 'stopped',
       default => $ntp::runmode ? {
-        cron    => 'stopped',
-        service => 'running',
+        'cron'    => 'stopped',
+        'service' => 'running',
       },
     },
   }
