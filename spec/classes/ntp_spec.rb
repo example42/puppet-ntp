@@ -175,11 +175,8 @@ describe 'ntp' do
     end
   end
 
-  describe 'Test service autorestart', :broken => true do
-    it 'should automatically restart the service, by default' do
-      content = catalogue.resource('file', 'ntp.conf').send(:parameters)[:notify]
-      content.should == 'Service[ntp]{:name=>"ntp"}'
-    end
+  describe 'Test service autorestart' do
+    it { should contain_file('ntp.conf').with_notify('Service[ntp]') }
   end
 
   describe 'Test service autorestart' do
