@@ -15,7 +15,7 @@ describe 'ntp' do
     it { should contain_file('ntp.cron').with_ensure('absent') }
     it 'should generate a valid default template' do
       content = catalogue.resource('file', 'ntp.conf').send(:parameters)[:content]
-      content.should match "server pool.ntp.org"
+      content.should match "server 1.pool.ntp.org"
     end
   end
 
@@ -73,7 +73,7 @@ describe 'ntp' do
     it { should contain_file('ntp.cron').with_ensure('present') }
     it 'should generate a valid default template' do
       content = catalogue.resource('file', 'ntp.cron').send(:parameters)[:content]
-      content.should match "/usr/sbin/ntpdate -s server1"
+      content.should match "ntpd -q"
     end
   end
 
