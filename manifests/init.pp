@@ -337,7 +337,10 @@ class ntp (
   }
 
   $manage_service_autorestart = $ntp::bool_service_autorestart ? {
-    true    => Service[ntp],
+    true    => $ntp::runmode ? {
+      service => Service[ntp],
+      cron    => undef,
+    },
     false   => undef,
   }
 
@@ -392,13 +395,15 @@ class ntp (
     name   => $ntp::real_package,
   }
 
-  service { 'ntp':
-    ensure     => $ntp::manage_service_ensure,
-    name       => $ntp::service,
-    enable     => $ntp::manage_service_enable,
-    hasstatus  => $ntp::service_status,
-    pattern    => $ntp::process,
-    require    => Package['ntp'],
+  if $runmode == 'service' {
+    service { 'ntp':
+      ensure     => $ntp::manage_service_ensure,
+      name       => $ntp::service,
+      enable     => $ntp::manage_service_enable,
+      hasstatus  => $ntp::service_status,
+      pattern    => $ntp::process,
+      require    => Package['ntp'],
+    }
   }
 
   file { 'ntp.cron':
