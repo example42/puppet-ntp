@@ -67,8 +67,8 @@ describe 'ntp' do
 
     it { should contain_package('ntp').with_ensure('present') }
     it { should contain_package('ntp').with_name('ntpdate') }
-    it { should contain_service('ntp').with_ensure('stopped') }
-    it { should contain_service('ntp').with_enable('false') }
+    it { should_not contain_service('ntp').with_ensure('stopped') }
+    it { should_not contain_service('ntp').with_enable('false') }
     it { should contain_file('ntp.conf').with_ensure('present') }
     it { should contain_file('ntp.cron').with_ensure('present') }
     it 'should generate a valid default template' do
