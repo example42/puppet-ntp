@@ -395,7 +395,7 @@ class ntp (
     name   => $ntp::real_package,
   }
 
-  if $runmode == 'service' {
+  if $runmode == 'service' and !$ntp::bool_absent {
     service { 'ntp':
       ensure     => $ntp::manage_service_ensure,
       name       => $ntp::service,

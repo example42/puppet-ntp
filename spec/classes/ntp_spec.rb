@@ -81,8 +81,7 @@ describe 'ntp' do
     let(:params) { {:absent => true, :monitor => true , :firewall => true, :port => '42', :protocol => 'tcp'} }
 
     it 'should remove Package[ntp]' do should contain_package('ntp').with_ensure('absent') end 
-    it 'should stop Service[ntp]' do should contain_service('ntp').with_ensure('stopped') end
-    it 'should not enable at boot Service[ntp]' do should contain_service('ntp').with_enable('false') end
+    it 'should not manage Service[ntp]' do should_not contain_service('ntp') end
     it 'should remove ntp configuration file' do should contain_file('ntp.conf').with_ensure('absent') end
     it 'should not monitor the process' do
       content = catalogue.resource('monitor::process', 'ntp_process').send(:parameters)[:enable]
