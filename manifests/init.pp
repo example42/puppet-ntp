@@ -254,10 +254,6 @@ class ntp (
   $puppi               = params_lookup( 'puppi' , 'global' ),
   $puppi_helper        = params_lookup( 'puppi_helper' , 'global' ),
   $firewall            = params_lookup( 'firewall' , 'global' ),
-  $firewall_tool       = params_lookup( 'firewall_tool' , 'global' ),
-  $firewall_src        = params_lookup( 'firewall_src' , 'global' ),
-  $firewall_dst        = params_lookup( 'firewall_dst' , 'global' ),
-  $enable_v6           = params_lookup( 'enable_v6' ),
   $debug               = params_lookup( 'debug' , 'global' ),
   $audit_only          = params_lookup( 'audit_only' , 'global' ),
   $package             = params_lookup( 'package' ),
@@ -519,16 +515,25 @@ class ntp (
 
   ### Firewall management, if enabled ( firewall => true )
   if $ntp::bool_firewall == true {
-    firewall { "ntp_${ntp::protocol}_${ntp::port}":
-      source      => $ntp::firewall_src,
-      destination => $ntp::firewall_dst,
-      protocol    => $ntp::protocol,
-      port        => $ntp::port,
-      action      => 'allow',
-      direction   => 'output',
-      tool        => $ntp::firewall_tool,
-      enable      => $ntp::manage_firewall,
-      enable_v6   => $ntp::enable_v6,
+    firewall::rule { "ntp_${ntp::protocol}_${ntp::port}-out":
+      destination    => $ntp::server,
+      destination_v6 => $ntp::server,
+      protocol       => $ntp::protocol,
+      port           => $ntp::port,
+      action         => 'allow',
+      direction      => 'output',
+      enable         => $ntp::manage_firewall,
+    }
+
+    firewall::rule { "ntp_${ntp::protocol}_${ntp::port}-in":
+      source                    => $ntp::server,
+      source_v6                 => $ntp::server,
+      protocol                  => $ntp::protocol,
+      port                      => $ntp::port,
+      action                    => 'allow',
+      direction                 => 'input',
+      iptables_explicit_matches => { 'state' => { 'state' => 'RELATED,ESTABLISHED' } },
+      enable                    => $ntp::manage_firewall,
     }
   }
 
