@@ -122,25 +122,6 @@
 #   Can be defined also by the (top scope) variables $ntp_firewall
 #   and $firewall
 #
-# [*firewall_tool*]
-#   Define which firewall tool(s) (ad defined in Example42 firewall module)
-#   you want to use to open firewall for ntp port(s)
-#   Can be defined also by the (top scope) variables $ntp_firewall_tool
-#   and $firewall_tool
-#
-# [*firewall_src*]
-#   Define which source ip/net allow for firewalling ntp. Default: 0.0.0.0/0
-#   Can be defined also by the (top scope) variables $ntp_firewall_src
-#   and $firewall_src
-#
-# [*firewall_dst*]
-#   Define which destination ip to use for firewalling. Default: $ipaddress
-#   Can be defined also by the (top scope) variables $ntp_firewall_dst
-#   and $firewall_dst
-#
-# [*enable_v6*]
-#   Enable IPv6 connectivity
-#
 # [*debug*]
 #   Set to 'true' to enable modules debugging
 #   Can be defined also by the (top scope) variables $ntp_debug and $debug
