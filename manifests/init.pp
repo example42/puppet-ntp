@@ -138,6 +138,9 @@
 #   Can be defined also by the (top scope) variables $ntp_firewall_dst
 #   and $firewall_dst
 #
+# [*enable_v6*]
+#   Enable IPv6 connectivity
+#
 # [*debug*]
 #   Set to 'true' to enable modules debugging
 #   Can be defined also by the (top scope) variables $ntp_debug and $debug
@@ -254,6 +257,7 @@ class ntp (
   $firewall_tool       = params_lookup( 'firewall_tool' , 'global' ),
   $firewall_src        = params_lookup( 'firewall_src' , 'global' ),
   $firewall_dst        = params_lookup( 'firewall_dst' , 'global' ),
+  $enable_v6           = params_lookup( 'enable_v6' ),
   $debug               = params_lookup( 'debug' , 'global' ),
   $audit_only          = params_lookup( 'audit_only' , 'global' ),
   $package             = params_lookup( 'package' ),
@@ -521,12 +525,12 @@ class ntp (
       protocol    => $ntp::protocol,
       port        => $ntp::port,
       action      => 'allow',
-      direction   => 'input',
+      direction   => 'output',
       tool        => $ntp::firewall_tool,
       enable      => $ntp::manage_firewall,
+      enable_v6   => $ntp::enable_v6,
     }
   }
-
 
   ### Debugging, if enabled ( debug => true )
   if $ntp::bool_debug == true {
