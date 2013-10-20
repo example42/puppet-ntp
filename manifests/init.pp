@@ -497,8 +497,6 @@ class ntp (
   ### Firewall management, if enabled ( firewall => true )
   if $ntp::bool_firewall == true {
     firewall::rule { "ntp_${ntp::protocol}_${ntp::port}-out":
-      destination    => $ntp::server,
-      destination_v6 => $ntp::server,
       protocol       => $ntp::protocol,
       port           => $ntp::port,
       action         => 'allow',
@@ -507,8 +505,6 @@ class ntp (
     }
 
     firewall::rule { "ntp_${ntp::protocol}_${ntp::port}-in":
-      source                    => $ntp::server,
-      source_v6                 => $ntp::server,
       protocol                  => $ntp::protocol,
       port                      => $ntp::port,
       action                    => 'allow',
