@@ -87,6 +87,7 @@ class ntp::params {
 
   $config_file_group = $::operatingsystem ? {
     /(?i:SLES|OpenSuSE)/ => 'ntp',
+    /(?i:FreeBSD)        => 'wheel',
     default              => 'root',
   }
 
