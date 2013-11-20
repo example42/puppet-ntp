@@ -29,11 +29,12 @@ class ntp::params {
   ### Application related parameters
 
   $package = $::operatingsystem ? {
-    'Solaris' => $::operatingsystemrelease ? {
-      '5.10'  => [ 'SUNWntpr' , 'SUNWntpu' ],
-      default => 'ntp',
+    'Solaris'      => $::operatingsystemrelease ? {
+      '5.10'       => [ 'SUNWntpr' , 'SUNWntpu' ],
+      default      => 'ntp',
     },
-    default   => 'ntp',
+    /(?i:FreeBSD)/ => '',  # Package resides in base
+    default        => 'ntp',
   }
   $ntpdate_package = $::operatingsystem ? {
     /(?i:Debian|Ubuntu|Mint)/ => 'ntpdate',
@@ -41,6 +42,7 @@ class ntp::params {
       '5.10'  => [ 'SUNWntpr' , 'SUNWntpu' ],
       default => 'ntp',
     },
+    /(?i:FreeBSD)/ => '',  # Package resides in base
     default                   => 'ntp',
   }
 
