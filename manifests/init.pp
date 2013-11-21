@@ -371,9 +371,19 @@ class ntp (
   }
 
   ### Managed resources
-  package { 'ntp':
-    ensure => $ntp::manage_package,
-    name   => $ntp::real_package,
+  # On systems like FreeBSD theres' no ntp package as it is in base
+  if $ntp::real_package == '' {
+    package { 'ntp':
+      ensure => $ntp::manage_package,
+      name   => 'ntp',
+      noop   => true
+    }
+
+  } else {
+    package { 'ntp':
+      ensure => $ntp::manage_package,
+      name   => $ntp::real_package,
+    }
   }
 
   if $runmode == 'service' and !$ntp::bool_absent {
