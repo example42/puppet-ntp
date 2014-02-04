@@ -199,6 +199,8 @@
 #   This is used by monitor, firewall and puppi (optional) components
 #   Can be defined also by the (top scope) variable $ntp_protocol
 #
+# [*time_zone*]
+#   When set, puppet sets the right time zone from the zoneinfo files
 #
 # == Examples
 #
@@ -258,7 +260,8 @@ class ntp (
   $use_local_clock     = params_lookup( 'use_local_clock' ),
   $tinker_panic        = params_lookup( 'tinker_panic' ),
   $port                = params_lookup( 'port' ),
-  $protocol            = params_lookup( 'protocol' )
+  $protocol            = params_lookup( 'protocol' ),
+  $time_zone           = params_lookup( 'time_zone' )
   ) inherits ntp::params {
 
   $bool_source_dir_purge=any2bool($source_dir_purge)
@@ -368,6 +371,14 @@ class ntp (
   $manage_file_content = $ntp::template ? {
     ''        => undef,
     default   => template($ntp::template),
+  }
+
+  $manage_time_zone = $ntp::time_zone_file ? {
+    ''      => false,
+    default => $time_zone ? {
+      ''      => false,
+      default => true,
+    }
   }
 
   ### Managed resources
@@ -501,6 +512,19 @@ class ntp (
       arguments => "-H $ntp::first_server",
       tool      => $ntp::monitor_tool,
       enable    => $ntp::manage_monitor,
+    }
+  }
+
+  # Time zone
+  if $ntp::manage_time_zone == true {
+    file { 'ntp_localtime':
+      ensure => file,
+      force  => true,
+      name   => $ntp::time_zone_file,
+      owner  => $ntp::time_zone_owner,
+      group  => $ntp::time_zone_group,
+      mode   => $ntp::time_zone_mode,
+      source => "${ntp::time_zone_path}/${time_zone}",
     }
   }
 

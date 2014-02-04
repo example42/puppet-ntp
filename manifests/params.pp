@@ -131,6 +131,27 @@ class ntp::params {
     default  => '',
   }
 
+  $time_zone_file = $::operatingsystem ? {
+    default => '/etc/localtime',
+  }
+
+  $time_zone_owner = $::operatingsystem ? {
+    default => 'root',
+  }
+
+  $time_zone_group = $::operatingsystem ? {
+    'FreeBSD' => 'wheel',
+    default   => 'root',
+  }
+
+  $time_zone_mode = $::operatingsystem ? {
+    default => '0444',
+  }
+ 
+  $time_zone_path = $::operatingsystem ? {
+    default => '/usr/share/zoneinfo/',
+  }
+
   $port = '123'
   $protocol = 'udp'
 
