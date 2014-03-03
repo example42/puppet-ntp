@@ -517,14 +517,22 @@ class ntp (
 
   # Time zone
   if $ntp::manage_time_zone == true {
-    file { 'ntp_localtime':
-      ensure => file,
-      force  => true,
-      name   => $ntp::time_zone_file,
-      owner  => $ntp::time_zone_owner,
-      group  => $ntp::time_zone_group,
-      mode   => $ntp::time_zone_mode,
-      source => "${ntp::time_zone_path}/${time_zone}",
+    if $::osfamily == 'Solaris' {
+        file_line { 'ntp_localtime':
+          path  => '/etc/default/init',
+          line  => "TZ=${time_zone}",
+          match => '^TZ=',
+        }
+    } else {
+      file { 'ntp_localtime':
+        ensure => file,
+        force  => true,
+        name   => $ntp::time_zone_file,
+        owner  => $ntp::time_zone_owner,
+        group  => $ntp::time_zone_group,
+        mode   => $ntp::time_zone_mode,
+        source => "${ntp::time_zone_path}/${time_zone}",
+      }
     }
   }
 
