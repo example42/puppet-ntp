@@ -20,7 +20,7 @@ class ntp::params {
   $cron_command = 'ntpd -q'
 
   $keys_file = $::operatingsystem ? {
-    'Solaris'            => '/etc/inet/ntp.keys',
+    /(?i:Solaris)/       => '/etc/inet/ntp.keys',
     /(?i:SLES|OpenSuSE)/ => '/etc/ntp.keys',
     default              => '/etc/ntp/keys',
   }
@@ -39,10 +39,10 @@ class ntp::params {
   }
 
   $service = $::operatingsystem ? {
-    /(?i:Debian|Ubuntu|Mint|Solaris)/ => 'ntp',
-    /(?i:SLES|OpenSuSE)/              => 'ntp',
-    /(?i:Solaris)/                    => 'network/ntp',
-    default                           => 'ntpd',
+    /(?i:Debian|Ubuntu|Mint)/  => 'ntp',
+    /(?i:SLES|OpenSuSE)/       => 'ntp',
+    /(?i:Solaris)/             => 'network/ntp',
+    default                    => 'ntpd',
   }
 
   $service_status = $::operatingsystem ? {
@@ -62,12 +62,12 @@ class ntp::params {
   }
 
   $config_dir = $::operatingsystem ? {
-    'Solaris' => '/etc/inet',
+    /(?i:Solaris)/ => '/etc/inet',
     default   => '/etc/ntp',
   }
 
   $config_file = $::operatingsystem ? {
-    'Solaris' => '/etc/inet/ntp.conf',
+    /(?i:Solaris)/ => '/etc/inet/ntp.conf',
     default   => '/etc/ntp.conf',
   }
 
@@ -92,12 +92,12 @@ class ntp::params {
   }
 
   $pid_file = $::operatingsystem ? {
-    'Solaris' => '/var/run/ntp.pid',
+    /(?i:Solaris)/ => '/var/run/ntp.pid',
     default   => '/var/run/ntpd.pid',
   }
 
   $data_dir = $::operatingsystem ? {
-    'Solaris' => '/var/ntp',
+    /(?i:Solaris)/ => '/var/ntp',
     default   => '/var/lib/ntp',
   }
 
