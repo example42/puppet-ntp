@@ -7,6 +7,6 @@ randomsec=$RANDOM
 let "randomsec %= 600"
 sleep $randomsec
 
-<%= @cron_command %>
+<%= @cron_command %> >/dev/null
 
 exit 0
