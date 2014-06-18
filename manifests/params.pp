@@ -114,8 +114,8 @@ class ntp::params {
   }
 
   $drift_file = $::operatingsystem ? {
-    /(?i:Debian|Ubuntu|Mint|Solaris)/ => "$data_dir/ntp.drift",
-    default                           => "$data_dir/drift",
+    /(?i:Debian|Ubuntu|Mint|Solaris)/ => "${data_dir}/ntp.drift",
+    default                           => "${data_dir}/drift",
   }
 
   $use_local_clock = $::virtual ? {

@@ -505,9 +505,9 @@ class ntp (
 
   # Time Monitoring
   if $ntp::bool_monitor == true {
-    monitor::plugin { "ntp_time":
+    monitor::plugin { 'ntp_time':
       plugin    => 'check_ntp',
-      arguments => "-H $ntp::first_server",
+      arguments => "-H ${ntp::first_server}",
       tool      => $ntp::monitor_tool,
       enable    => $ntp::manage_monitor,
     }
