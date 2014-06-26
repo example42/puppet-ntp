@@ -122,22 +122,6 @@
 #   Can be defined also by the (top scope) variables $ntp_firewall
 #   and $firewall
 #
-# [*firewall_tool*]
-#   Define which firewall tool(s) (ad defined in Example42 firewall module)
-#   you want to use to open firewall for ntp port(s)
-#   Can be defined also by the (top scope) variables $ntp_firewall_tool
-#   and $firewall_tool
-#
-# [*firewall_src*]
-#   Define which source ip/net allow for firewalling ntp. Default: 0.0.0.0/0
-#   Can be defined also by the (top scope) variables $ntp_firewall_src
-#   and $firewall_src
-#
-# [*firewall_dst*]
-#   Define which destination ip to use for firewalling. Default: $ipaddress
-#   Can be defined also by the (top scope) variables $ntp_firewall_dst
-#   and $firewall_dst
-#
 # [*debug*]
 #   Set to 'true' to enable modules debugging
 #   Can be defined also by the (top scope) variables $ntp_debug and $debug
@@ -215,6 +199,8 @@
 #   This is used by monitor, firewall and puppi (optional) components
 #   Can be defined also by the (top scope) variable $ntp_protocol
 #
+# [*time_zone*]
+#   When set, puppet sets the right time zone from the zoneinfo files
 #
 # == Examples
 #
@@ -251,9 +237,6 @@ class ntp (
   $puppi               = params_lookup( 'puppi' , 'global' ),
   $puppi_helper        = params_lookup( 'puppi_helper' , 'global' ),
   $firewall            = params_lookup( 'firewall' , 'global' ),
-  $firewall_tool       = params_lookup( 'firewall_tool' , 'global' ),
-  $firewall_src        = params_lookup( 'firewall_src' , 'global' ),
-  $firewall_dst        = params_lookup( 'firewall_dst' , 'global' ),
   $debug               = params_lookup( 'debug' , 'global' ),
   $audit_only          = params_lookup( 'audit_only' , 'global' ),
   $package             = params_lookup( 'package' ),
@@ -277,7 +260,8 @@ class ntp (
   $use_local_clock     = params_lookup( 'use_local_clock' ),
   $tinker_panic        = params_lookup( 'tinker_panic' ),
   $port                = params_lookup( 'port' ),
-  $protocol            = params_lookup( 'protocol' )
+  $protocol            = params_lookup( 'protocol' ),
+  $time_zone           = params_lookup( 'time_zone' )
   ) inherits ntp::params {
 
   $bool_source_dir_purge=any2bool($source_dir_purge)
@@ -389,10 +373,28 @@ class ntp (
     default   => template($ntp::template),
   }
 
+  $manage_time_zone = $ntp::time_zone_file ? {
+    ''      => false,
+    default => $time_zone ? {
+      ''      => false,
+      default => true,
+    }
+  }
+
   ### Managed resources
-  package { 'ntp':
-    ensure => $ntp::manage_package,
-    name   => $ntp::real_package,
+  # On systems like FreeBSD theres' no ntp package as it is in base
+  if $ntp::real_package == '' {
+    package { 'ntp':
+      ensure => $ntp::manage_package,
+      name   => 'ntp',
+      noop   => true
+    }
+
+  } else {
+    package { 'ntp':
+      ensure => $ntp::manage_package,
+      name   => $ntp::real_package,
+    }
   }
 
   if $runmode == 'service' and !$ntp::bool_absent {
@@ -513,20 +515,46 @@ class ntp (
     }
   }
 
-  ### Firewall management, if enabled ( firewall => true )
-  if $ntp::bool_firewall == true {
-    firewall { "ntp_${ntp::protocol}_${ntp::port}":
-      source      => $ntp::firewall_src,
-      destination => $ntp::firewall_dst,
-      protocol    => $ntp::protocol,
-      port        => $ntp::port,
-      action      => 'allow',
-      direction   => 'input',
-      tool        => $ntp::firewall_tool,
-      enable      => $ntp::manage_firewall,
+  # Time zone
+  if $ntp::manage_time_zone == true {
+    if $::osfamily == 'Solaris' {
+        file_line { 'ntp_localtime':
+          path  => '/etc/default/init',
+          line  => "TZ=${time_zone}",
+          match => '^TZ=',
+        }
+    } else {
+      file { 'ntp_localtime':
+        ensure => file,
+        force  => true,
+        name   => $ntp::time_zone_file,
+        owner  => $ntp::time_zone_owner,
+        group  => $ntp::time_zone_group,
+        mode   => $ntp::time_zone_mode,
+        source => "${ntp::time_zone_path}/${time_zone}",
+      }
     }
   }
 
+  ### Firewall management, if enabled ( firewall => true )
+  if $ntp::bool_firewall == true {
+    firewall::rule { "ntp_${ntp::protocol}_${ntp::port}-out":
+      protocol       => $ntp::protocol,
+      port           => $ntp::port,
+      action         => 'allow',
+      direction      => 'output',
+      enable         => $ntp::manage_firewall,
+    }
+
+    firewall::rule { "ntp_${ntp::protocol}_${ntp::port}-in":
+      protocol                  => $ntp::protocol,
+      port                      => $ntp::port,
+      action                    => 'allow',
+      direction                 => 'input',
+      iptables_explicit_matches => { 'state' => { 'state' => 'RELATED,ESTABLISHED' } },
+      enable                    => $ntp::manage_firewall,
+    }
+  }
 
   ### Debugging, if enabled ( debug => true )
   if $ntp::bool_debug == true {

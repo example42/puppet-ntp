@@ -20,7 +20,7 @@ class ntp::params {
   $cron_command = 'ntpd -q'
 
   $keys_file = $::operatingsystem ? {
-    'Solaris'            => '/etc/inet/ntp.keys',
+    /(?i:Solaris)/       => '/etc/inet/ntp.keys',
     /(?i:SLES|OpenSuSE)/ => '/etc/ntp.keys',
     default              => '/etc/ntp/keys',
   }
@@ -29,25 +29,20 @@ class ntp::params {
   ### Application related parameters
 
   $package = $::operatingsystem ? {
-    'Solaris' => $::operatingsystemrelease ? {
-      '5.10'  => [ 'SUNWntpr' , 'SUNWntpu' ],
-      default => 'ntp',
-    },
-    default   => 'ntp',
+    /(?i:Solaris|FreeBSD)/ => '',  # Package resides in base
+    default                => 'ntp',
   }
   $ntpdate_package = $::operatingsystem ? {
     /(?i:Debian|Ubuntu|Mint)/ => 'ntpdate',
-    'Solaris'                 => $::operatingsystemrelease ? {
-      '5.10'  => [ 'SUNWntpr' , 'SUNWntpu' ],
-      default => 'ntp',
-    },
+    /(?i:Solaris|FreeBSD)/    => '',  # Package resides in base
     default                   => 'ntp',
   }
 
   $service = $::operatingsystem ? {
-    /(?i:Debian|Ubuntu|Mint|Solaris)/ => 'ntp',
-    /(?i:SLES|OpenSuSE)/              => 'ntp',
-    default                           => 'ntpd',
+    /(?i:Debian|Ubuntu|Mint)/  => 'ntp',
+    /(?i:SLES|OpenSuSE)/       => 'ntp',
+    /(?i:Solaris)/             => 'network/ntp',
+    default                    => 'ntpd',
   }
 
   $service_status = $::operatingsystem ? {
@@ -67,12 +62,12 @@ class ntp::params {
   }
 
   $config_dir = $::operatingsystem ? {
-    'Solaris' => '/etc/inet',
+    /(?i:Solaris)/ => '/etc/inet',
     default   => '/etc/ntp',
   }
 
   $config_file = $::operatingsystem ? {
-    'Solaris' => '/etc/inet/ntp.conf',
+    /(?i:Solaris)/ => '/etc/inet/ntp.conf',
     default   => '/etc/ntp.conf',
   }
 
@@ -87,6 +82,7 @@ class ntp::params {
 
   $config_file_group = $::operatingsystem ? {
     /(?i:SLES|OpenSuSE)/ => 'ntp',
+    /(?i:FreeBSD)/       => 'wheel',
     default              => 'root',
   }
 
@@ -96,12 +92,13 @@ class ntp::params {
   }
 
   $pid_file = $::operatingsystem ? {
-    'Solaris' => '/var/run/ntp.pid',
+    /(?i:Solaris)/ => '/var/run/ntp.pid',
     default   => '/var/run/ntpd.pid',
   }
 
   $data_dir = $::operatingsystem ? {
-    'Solaris' => '/var/ntp',
+    /(?i:Solaris)/ => '/var/ntp',
+    /(?i:FreeBSD)/ => '/var/db/',
     default   => '/var/lib/ntp',
   }
 
@@ -128,6 +125,27 @@ class ntp::params {
     default  => '',
   }
 
+  $time_zone_file = $::operatingsystem ? {
+    default => '/etc/localtime',
+  }
+
+  $time_zone_owner = $::operatingsystem ? {
+    default => 'root',
+  }
+
+  $time_zone_group = $::operatingsystem ? {
+    'FreeBSD' => 'wheel',
+    default   => 'root',
+  }
+
+  $time_zone_mode = $::operatingsystem ? {
+    default => '0444',
+  }
+
+  $time_zone_path = $::operatingsystem ? {
+    default => '/usr/share/zoneinfo/',
+  }
+
   $port = '123'
   $protocol = 'udp'
 
@@ -148,10 +166,7 @@ class ntp::params {
   $monitor = false
   $monitor_tool = ''
   $monitor_target = $::ipaddress
-  $firewall = false
-  $firewall_tool = ''
-  $firewall_src = '0.0.0.0/0'
-  $firewall_dst = $::ipaddress
+  $firewall = true
   $puppi = false
   $puppi_helper = 'standard'
   $debug = false
