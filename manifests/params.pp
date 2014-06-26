@@ -98,6 +98,7 @@ class ntp::params {
 
   $data_dir = $::operatingsystem ? {
     /(?i:Solaris)/ => '/var/ntp',
+    /(?i:FreeBSD)/ => '/var/db/',
     default   => '/var/lib/ntp',
   }
 
