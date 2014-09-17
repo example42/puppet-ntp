@@ -391,11 +391,11 @@ class ntp (
 
   ### Managed resources
   if ! defined(Package['ntp']) {
-  package { 'ntp':
-    ensure => $ntp::manage_package,
-    name   => $ntp::real_package,
+    package { 'ntp':
+      ensure => $ntp::manage_package,
+      name   => $ntp::real_package,
+    }
   }
-}
 
   if $runmode == 'service' and !$ntp::bool_absent {
     service { 'ntp':
