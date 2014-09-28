@@ -390,9 +390,11 @@ class ntp (
   }
 
   ### Managed resources
-  package { 'ntp':
-    ensure => $ntp::manage_package,
-    name   => $ntp::real_package,
+  if ! defined(Package['ntp']) {
+    package { 'ntp':
+      ensure => $ntp::manage_package,
+      name   => $ntp::real_package,
+    }
   }
 
   if $runmode == 'service' and !$ntp::bool_absent {
@@ -505,9 +507,9 @@ class ntp (
 
   # Time Monitoring
   if $ntp::bool_monitor == true {
-    monitor::plugin { "ntp_time":
+    monitor::plugin { 'ntp_time':
       plugin    => 'check_ntp',
-      arguments => "-H $ntp::first_server",
+      arguments => "-H ${ntp::first_server}",
       tool      => $ntp::monitor_tool,
       enable    => $ntp::manage_monitor,
     }
