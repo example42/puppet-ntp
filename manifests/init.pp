@@ -435,7 +435,7 @@ class ntp (
   }
 
   # The whole ntp configuration directory can be recursively overriden
-  if $ntp::source_dir {
+  if $ntp::source_dir and $ntp::source_dir != '' {
     file { 'ntp.dir':
       ensure  => directory,
       path    => $ntp::config_dir,
@@ -450,7 +450,7 @@ class ntp (
   }
 
   # The ntp keys file is managed if exists a source
-  if $ntp::keys_file_source {
+  if $ntp::keys_file_source and $ntp::keys_file_source != '' {
     file { 'ntp.key':
       ensure  => $ntp::manage_file,
       path    => $ntp::keys_file,
@@ -466,7 +466,7 @@ class ntp (
   }
 
   ### Include custom class if $my_class is set
-  if $ntp::my_class {
+  if $ntp::my_class and $ntp::my_class != '' {
     include $ntp::my_class
   }
 
