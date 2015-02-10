@@ -4,7 +4,24 @@ describe 'ntp' do
 
   let(:title) { 'ntp' }
   let(:node) { 'rspec.example42.com' }
-  let(:facts) { { :ipaddress => '10.42.42.42' } }
+  let :facts do
+    {
+      :ipaddress                 => '10.42.42.42',
+      :id                        => 'root',
+      :osfamily                  => 'Debian',
+      :kernel                    => 'Linux',
+      :operatingsystem           => 'Debian',
+      :operatingsystemrelease    => '7.8',
+      :operatingsystemmajrelease => '7',
+      :virtual                   => 'physical',
+      :path                      => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+      :concat_basedir            => '/dne',
+      # Strict variables
+      :puppi_archivedir          => nil,
+      :puppi_workdir             => nil,
+      :ntp_server                => nil,
+    }
+  end
 
   describe 'Test standard installation' do
     it { should contain_package('ntp').with_ensure('present') }
@@ -61,19 +78,27 @@ describe 'ntp' do
     end
   end
 
-  describe 'Test install with cron runmode on Debian' do
-    let(:facts) { { :ipaddress => '10.42.42.42', :operatingsystem => 'Debian' } }
-    let(:params) { {:runmode => 'cron', :server => ['server1', 'server2'] } }
+  context "on Debian" do
+    let :facts do
+      super().merge({
+        :operatingsystem           => 'Debian',
+        :operatingsystemrelease    => '7.8',
+        :operatingsystemmajrelease => '7',
+      })
+    end
+    describe 'Test install with cron runmode on Debian' do
+      let(:params) { {:runmode => 'cron', :server => ['server1', 'server2'] } }
 
-    it { should contain_package('ntp').with_ensure('present') }
-    it { should contain_package('ntp').with_name('ntpdate') }
-    it { should_not contain_service('ntp').with_ensure('stopped') }
-    it { should_not contain_service('ntp').with_enable('false') }
-    it { should contain_file('ntp.conf').with_ensure('present') }
-    it { should contain_file('ntp.cron').with_ensure('present') }
-    it 'should generate a valid default template' do
-      content = catalogue.resource('file', 'ntp.cron').send(:parameters)[:content]
-      content.should match "ntpd -q"
+      it { should contain_package('ntp').with_ensure('present') }
+      it { should contain_package('ntp').with_name('ntpdate') }
+      it { should_not contain_service('ntp').with_ensure('stopped') }
+      it { should_not contain_service('ntp').with_enable('false') }
+      it { should contain_file('ntp.conf').with_ensure('present') }
+      it { should contain_file('ntp.cron').with_ensure('present') }
+      it 'should generate a valid default template' do
+        content = catalogue.resource('file', 'ntp.cron').send(:parameters)[:content]
+        content.should match "ntpd -q"
+      end
     end
   end
 
@@ -232,7 +257,11 @@ describe 'ntp' do
   end
 
   describe 'Test params lookup' do
-    let(:facts) { { :monitor => true , :ipaddress => '10.42.42.42' } }
+    let :facts do
+      super().merge({
+        :monitor => true,
+      })
+    end
     let(:params) { { :port => '42' } }
 
     it 'should honour top scope global vars' do
@@ -242,7 +271,11 @@ describe 'ntp' do
   end
 
   describe 'Test params lookup' do
-    let(:facts) { { :ntp_monitor => true , :ipaddress => '10.42.42.42' } }
+    let :facts do
+      super().merge({
+        :ntp_monitor => true,
+      })
+    end
     let(:params) { { :port => '42' } }
 
     it 'should honour module specific vars' do
@@ -252,7 +285,12 @@ describe 'ntp' do
   end
 
   describe 'Test params lookup' do
-    let(:facts) { { :monitor => false , :ntp_monitor => true , :ipaddress => '10.42.42.42' } }
+    let :facts do
+      super().merge({
+        :monitor    => false,
+        :ntp_monitor => true,
+      })
+    end
     let(:params) { { :port => '42' } }
 
     it 'should honour top scope module specific over global vars' do
@@ -262,7 +300,11 @@ describe 'ntp' do
   end
 
   describe 'Test params lookup' do
-    let(:facts) { { :monitor => false , :ipaddress => '10.42.42.42' } }
+    let :facts do
+      super().merge({
+        :monitor    => false,
+      })
+    end
     let(:params) { { :monitor => true , :firewall => true, :port => '42' } }
 
     it 'should honour passed params over global vars' do
