@@ -1,5 +1,6 @@
 fixtures:
   repositories:
+    stdlib: 'https://github.com/puppetlabs/puppetlabs-stdlib.git'
     "puppi": "git://github.com/example42/puppi.git"
     "monitor": "git://github.com/example42/puppet-monitor.git"
     "firewall": "git://github.com/example42/puppet-firewall.git"
@@ -7,4 +8,3 @@ fixtures:
     "concat": "git://github.com/example42/puppet-concat.git"
   symlinks:
     "ntp": "#{source_dir}"
-
