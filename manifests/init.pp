@@ -399,12 +399,12 @@ class ntp (
 
   if $runmode == 'service' and !$ntp::bool_absent {
     service { 'ntp':
-      ensure     => $ntp::manage_service_ensure,
-      name       => $ntp::service,
-      enable     => $ntp::manage_service_enable,
-      hasstatus  => $ntp::service_status,
-      pattern    => $ntp::process,
-      require    => Package['ntp'],
+      ensure    => $ntp::manage_service_ensure,
+      name      => $ntp::service,
+      enable    => $ntp::manage_service_enable,
+      hasstatus => $ntp::service_status,
+      pattern   => $ntp::process,
+      require   => Package['ntp'],
     }
   }
 
