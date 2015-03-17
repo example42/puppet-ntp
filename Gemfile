@@ -13,7 +13,6 @@ else
 end
 
 gem 'puppet-lint'
-gem 'rspec', '= 2.14.1'
 gem 'puppetlabs_spec_helper', '>= 0.1.0'
 
 # vim:ft=ruby
