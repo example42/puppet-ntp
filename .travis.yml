@@ -1,7 +1,7 @@
 ---
 language: ruby
 script:
-  - "rake spec SPEC_OPTS='--format documentation'"
+  - "bundle exec rake validate lint spec SPEC_OPTS='--format documentation'"
 sudo: false
 matrix:
   include:
