@@ -1,4 +1,4 @@
-source :rubygems
+source 'https://rubygems.org'
 
 if facterversion = ENV['FACTER_GEM_VERSION']
   gem 'facter', facterversion, :require => false
