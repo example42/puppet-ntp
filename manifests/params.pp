@@ -130,6 +130,8 @@ class ntp::params {
 
   $port = '123'
   $protocol = 'udp'
+  $monitor_plugin = 'check_ntp'
+  $monitor_plugin_arguments = ''
 
   # General Settings
   $my_class = ''

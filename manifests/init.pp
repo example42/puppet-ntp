@@ -105,6 +105,16 @@
 #   Can be defined also by the (top scope) variables $ntp_monitor_target
 #   and $monitor_target
 #
+# [*monitor_plugin*]
+#   Specify plugin name for nrpe plugin
+#   Set to '' for ignore nrpe plugin resource
+#   Can be defined also by the (top scope) variables $ntp_monitor_plugin
+#
+# [*monitor_plugin_arguments*]
+#   Specify arguments thats will be passed to ntp::monitor_plugin
+#   for example -t 30 for set timeout to 30 secs
+#   Can be defined also by the (top scope) variables $ntp_monitor_plugin_arguments
+#
 # [*puppi*]
 #   Set to 'true' to enable creation of module data files that are used by puppi
 #   Can be defined also by the (top scope) variables $ntp_puppi and $puppi
@@ -248,6 +258,8 @@ class ntp (
   $monitor             = params_lookup( 'monitor' , 'global' ),
   $monitor_tool        = params_lookup( 'monitor_tool' , 'global' ),
   $monitor_target      = params_lookup( 'monitor_target' , 'global' ),
+  $monitor_plugin      = params_lookup( 'monitor_plugin' ),
+  $monitor_plugin_arguments = params_lookup( 'monitor_plugin_arguments' ),
   $puppi               = params_lookup( 'puppi' , 'global' ),
   $puppi_helper        = params_lookup( 'puppi_helper' , 'global' ),
   $firewall            = params_lookup( 'firewall' , 'global' ),
@@ -506,10 +518,10 @@ class ntp (
   }
 
   # Time Monitoring
-  if $ntp::bool_monitor == true {
+  if $ntp::bool_monitor == true and $ntp::monitor_plugin != '' {
     monitor::plugin { 'ntp_time':
-      plugin    => 'check_ntp',
-      arguments => "-H ${ntp::first_server}",
+      plugin    => $ntp::monitor_plugin,
+      arguments => "${ntp::monitor_plugin_arguments} -H ${ntp::first_server}",
       tool      => $ntp::monitor_tool,
       enable    => $ntp::manage_monitor,
     }
